@@ -1,20 +1,51 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# ProMedic Diet
 
-# Run and deploy your AI Studio app
+دليلي الغذائي - Arabic Diet & Nutrition Guide application.
 
-This contains everything you need to run your app locally.
+## Description
 
-View your app in AI Studio: https://ai.studio/apps/drive/1mwNmMMiOsZAyMw448-Hl-q8hZpiQNwd6
+A comprehensive diet and nutrition guide application in Arabic, providing personalized meal plans, nutritional information, and dietary recommendations.
 
-## Run Locally
+## Deployment
 
-**Prerequisites:**  Node.js
+- **URL:** https://diet.promedic1.com
+- **Server:** promedic1.com (46.62.228.173)
 
+## Features
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- Arabic language interface
+- Personalized diet plans
+- Nutritional information database
+- PWA support
+- Responsive design
+
+## Structure
+
+- `App.tsx` - Main React application
+- `components/` - React components
+- `services/` - API services
+- `hooks/` - Custom React hooks
+- `dist/` - Built assets
+
+## Tech Stack
+
+- React + TypeScript
+- Tailwind CSS
+- Vite build tool
+- PocketBase backend
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+---
+Part of ProMedic Healthcare Platform

@@ -17,7 +17,7 @@ export const getHealthTip = async (calories: number, age: number, gender: string
     `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: prompt,
     });
 

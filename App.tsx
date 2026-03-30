@@ -22,12 +22,16 @@ import LowCarb1700PlanView from './components/LowCarb1700PlanView';
 import LowCarb1900PlanView from './components/LowCarb1900PlanView';
 import LowCarb2100PlanView from './components/LowCarb2100PlanView';
 import { IconKeto, IconSun, IconMoon } from './components/Icons';
+import { useAuth } from './hooks/useAuth';
 
 const App: React.FC = () => {
   const [recommendedCalories, setRecommendedCalories] = useState<number | null>(null);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
+  
+  // Auth integration - ensures secure data access
+  const { isReady, error: authError } = useAuth();
 
   // Toggle Dark Mode
   useEffect(() => {
@@ -46,30 +50,80 @@ const App: React.FC = () => {
   };
 
   const handleSelectPlan = (planId: string) => {
-    if (planId === 'keto-2000' || 
-        planId === 'keto-1100' ||
-        planId === 'keto-1300' || 
-        planId === 'keto-1500' || 
-        planId === 'keto-1700' ||
-        planId === 'keto-1900' ||
-        planId === 'keto-2100' ||
-        planId === 'balanced-1100' || 
-        planId === 'balanced-1300' || 
-        planId === 'balanced-1500' ||
-        planId === 'balanced-1700' ||
-        planId === 'balanced-1900' ||
-        planId === 'balanced-2100' ||
-        planId === 'low-carb-1100' ||
-        planId === 'low-carb-1300' ||
-        planId === 'low-carb-1500' ||
-        planId === 'low-carb-1700' ||
-        planId === 'low-carb-1900' ||
-        planId === 'low-carb-2100') {
+    // Validate plan ID
+    const validPlans = [
+      'keto-2000', 'keto-1100', 'keto-1300', 'keto-1500', 
+      'keto-1700', 'keto-1900', 'keto-2100',
+      'balanced-1100', 'balanced-1300', 'balanced-1500', 
+      'balanced-1700', 'balanced-1900', 'balanced-2100',
+      'low-carb-1100', 'low-carb-1300', 'low-carb-1500', 
+      'low-carb-1700', 'low-carb-1900', 'low-carb-2100'
+    ];
+    
+    if (validPlans.includes(planId)) {
       setSelectedPlanId(planId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       alert('تفاصيل هذه الخطة ستكون متاحة قريباً!');
     }
+  };
+
+  // Show loading state while authenticating
+  if (!isReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">جاري التحميل...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if auth failed
+  if (authError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-4">
+        <div className="text-center max-w-md mx-auto">
+          <div className="text-red-500 text-5xl mb-4">⚠️</div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            خطأ في الاتصال
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            فشل الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            إعادة المحاولة
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Plan view component mapping - DRY principle
+  const planViews: Record<string, React.ReactNode> = {
+    'keto-2000': <KetoPlanView onBack={() => setSelectedPlanId(null)} />,
+    'keto-1100': <Keto1100PlanView onBack={() => setSelectedPlanId(null)} />,
+    'keto-1300': <Keto1300PlanView onBack={() => setSelectedPlanId(null)} />,
+    'keto-1500': <Keto1500PlanView onBack={() => setSelectedPlanId(null)} />,
+    'keto-1700': <Keto1700PlanView onBack={() => setSelectedPlanId(null)} />,
+    'keto-1900': <Keto1900PlanView onBack={() => setSelectedPlanId(null)} />,
+    'keto-2100': <Keto2100PlanView onBack={() => setSelectedPlanId(null)} />,
+    'balanced-1100': <Balanced1100PlanView onBack={() => setSelectedPlanId(null)} />,
+    'balanced-1300': <Balanced1300PlanView onBack={() => setSelectedPlanId(null)} />,
+    'balanced-1500': <Balanced1500PlanView onBack={() => setSelectedPlanId(null)} />,
+    'balanced-1700': <Balanced1700PlanView onBack={() => setSelectedPlanId(null)} />,
+    'balanced-1900': <Balanced1900PlanView onBack={() => setSelectedPlanId(null)} />,
+    'balanced-2100': <Balanced2100PlanView onBack={() => setSelectedPlanId(null)} />,
+    'low-carb-1100': <LowCarb1100PlanView onBack={() => setSelectedPlanId(null)} />,
+    'low-carb-1300': <LowCarb1300PlanView onBack={() => setSelectedPlanId(null)} />,
+    'low-carb-1500': <LowCarb1500PlanView onBack={() => setSelectedPlanId(null)} />,
+    'low-carb-1700': <LowCarb1700PlanView onBack={() => setSelectedPlanId(null)} />,
+    'low-carb-1900': <LowCarb1900PlanView onBack={() => setSelectedPlanId(null)} />,
+    'low-carb-2100': <LowCarb2100PlanView onBack={() => setSelectedPlanId(null)} />,
   };
 
   return (
@@ -108,44 +162,8 @@ const App: React.FC = () => {
 
       {/* Main Content */}
       <main className="relative z-10 container mx-auto px-4 pt-12 md:pt-16">
-        {selectedPlanId === 'keto-2000' ? (
-          <KetoPlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'keto-1100' ? (
-          <Keto1100PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'keto-1300' ? (
-          <Keto1300PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'keto-1500' ? (
-          <Keto1500PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'keto-1700' ? (
-          <Keto1700PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'keto-1900' ? (
-          <Keto1900PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'keto-2100' ? (
-          <Keto2100PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'balanced-1100' ? (
-          <Balanced1100PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'balanced-1300' ? (
-          <Balanced1300PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'balanced-1500' ? (
-          <Balanced1500PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'balanced-1700' ? (
-          <Balanced1700PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'balanced-1900' ? (
-          <Balanced1900PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'balanced-2100' ? (
-          <Balanced2100PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'low-carb-1100' ? (
-          <LowCarb1100PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'low-carb-1300' ? (
-          <LowCarb1300PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'low-carb-1500' ? (
-          <LowCarb1500PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'low-carb-1700' ? (
-          <LowCarb1700PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'low-carb-1900' ? (
-          <LowCarb1900PlanView onBack={() => setSelectedPlanId(null)} />
-        ) : selectedPlanId === 'low-carb-2100' ? (
-          <LowCarb2100PlanView onBack={() => setSelectedPlanId(null)} />
+        {selectedPlanId && planViews[selectedPlanId] ? (
+          planViews[selectedPlanId]
         ) : (
           <>
             <div className="text-center mb-16 max-w-3xl mx-auto">
